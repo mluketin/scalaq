@@ -13,7 +13,7 @@ object SaveTest extends App {
   val question = new persistence.Question()
     .setBody("How old are you?")
     .setDescription("...")
-    .setSpec(new persistence.TextInputQuestion())
+    .setSpec(new persistence.TextInputQuestion()) //this line might report error, but ignore it, because there is no error
 
   val list = scala.collection.JavaConversions.seqAsJavaList(Seq(question))
 
