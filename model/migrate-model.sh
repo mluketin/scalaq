@@ -1,5 +1,5 @@
 #!/bin/bash
-MODULE=dorscluc
+MODULE=scalaq
 SRC=temp/DSL-Platform/model/REVENJ_JAVA
 
 PWD=$(pwd)
@@ -21,7 +21,7 @@ java \
   "namespace=${MODULE}" \
   "revenj.java=../../libs/${MODULE}-model.jar" \
   manual-json \
-  "postgres=localhost:5432/${MODULE}_db?user=${MODULE}_user&password=${MODULE}_pass" \
+  "postgres=localhost:5432/${MODULE}?user=${MODULE}&password=${MODULE}" \
   sql=../sql \
   apply
 
