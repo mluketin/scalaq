@@ -3,8 +3,9 @@ package com.scalaq.survey.export
 import java.awt.Desktop
 import java.io.{File, FileOutputStream}
 
-import com.scalaq.survey.model.answer.Answer
-import com.scalaq.survey.model.{CompletedQuestionnaire, Questionnaire, question}
+import com.scalaq.survey.model.answer.{Answer, Unanswered}
+import com.scalaq.survey.model.questionnaire.{CompletedQuestionnaire, Questionnaire}
+import com.scalaq.survey.model.question
 import hr.ngs.templater.Configuration
 
 
@@ -32,11 +33,13 @@ class Mapper(quest: Questionnaire) {
 
     var counter = 0
     for (answers <- completedQuestionnaire.answers) {
-      var map: Map[Answer, Int] = exportMap.get(questionnaire.questions(counter)).get
-      val newValue = map.getOrElse(answers, 0) + 1
-      map += (answers -> newValue)
-      exportMap += (questionnaire.questions(counter) -> map)
-      counter += 1
+      if(!answers.isInstanceOf[Unanswered]) {
+        var map: Map[Answer, Int] = exportMap.get(questionnaire.questions(counter)).get
+        val newValue = map.getOrElse(answers, 0) + 1
+        map += (answers -> newValue)
+        exportMap += (questionnaire.questions(counter) -> map)
+        counter += 1
+      }
     }
   }
 
