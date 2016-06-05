@@ -5,6 +5,7 @@ import java.util
 import com.scalaq.survey.export.Mapper
 import com.scalaq.survey.model._
 import com.scalaq.survey.model.question._
+import com.scalaq.survey.model.questionnaire.{CompletedQuestionnaire, Questionnaire}
 import org.scalatest.{FlatSpec, Matchers}
 
 class CreateQuestionsTest2 extends FlatSpec with Matchers {
@@ -63,7 +64,7 @@ class CreateQuestionsTest2 extends FlatSpec with Matchers {
     val mapper = new Mapper(completedQuestionnaire1.questionnaire)
     mapper.mapResults(completedQuestionnaires)
 //    mapper.mapResults(listAsSeq)
-//    mapper.exportXlsx()
-      mapper.exportDocx()
+    mapper.exportXlsx()
+//      mapper.exportDocx()
   }
 }
