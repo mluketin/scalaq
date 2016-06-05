@@ -12,7 +12,6 @@ java ^
   namespace=%MODULE% ^
   revenj.java=..\..\lib\%MODULE%-model.jar ^
   "postgres=localhost:5432/%MODULE%?user=%MODULE%&password=%MODULE%" ^
-  compiler=..\dsl-compiler.exe ^
   sql=..\sql ^
   apply
 IF ERRORLEVEL 1 goto :error
