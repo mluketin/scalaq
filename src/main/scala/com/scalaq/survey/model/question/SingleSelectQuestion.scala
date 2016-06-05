@@ -1,33 +1,44 @@
 package com.scalaq.survey.model.question
 
-import com.scalaq.survey.model._
 import java.util.Random
 
-import com.scalaq.survey.model.answer.{Answer, SingleAnswer}
+import com.scalaq.survey.model.answer.{Answer, SingleSelectAnswer}
 
 import scalaq.persistence
-import scalaq.persistence.SingleSelectQuestion
 
 
 //radio botuns, combo box
-case class SingleSelectQuestion(questionText: String, questionDescription: Option[String], offeredAnswers: Seq[String]) extends Question {
+case class SingleSelectQuestion(questionText: String, questionDescription: Option[String], offeredAnswers: Seq[String], other: Option[String] = None) extends Question {
   def getRandomAnswer(): Answer = {
     val rand = new Random()
     val random_index = rand.nextInt(offeredAnswers.length)
-    SingleAnswer(random_index)
+    SingleSelectAnswer(Some(random_index))
   }
 
   def getExportData(answers: Map[Question, Map[Answer, Int]]): Array[Array[Object]] = {
     val header: Array[Object] = Array("Answers:", "#")
     val map = answers.get(this).get
-    val data = new Array[Array[Object]](offeredAnswers.size + 1)
+
+    var numberOfAnswers = 0
+    var numberOfOfferedAnswers = 0
+    for(v <- map.values) {
+      numberOfAnswers += v
+    }
+
+    val isOtherCount = if(other == None) 0 else 1
+    val data = new Array[Array[Object]](offeredAnswers.size + 1 + isOtherCount)
     data(0) = header
 
     var br = 1
     for (offeredAnswer <- offeredAnswers) {
       data(br) = Array(offeredAnswer,
-        map.getOrElse(SingleAnswer(br - 1), 0).asInstanceOf[Object])
+        map.getOrElse(SingleSelectAnswer(Some(br - 1)), 0).asInstanceOf[Object])
+      numberOfOfferedAnswers += map.getOrElse(SingleSelectAnswer(Some(br - 1)), 0)
       br += 1
+    }
+    if(isOtherCount == 1) {
+      val numberOfOtherAnswes = numberOfAnswers - numberOfOfferedAnswers
+      data(br) = Array(other.get, numberOfOtherAnswes.asInstanceOf[Object])
     }
     data
   }
@@ -38,8 +49,8 @@ case class SingleSelectQuestion(questionText: String, questionDescription: Optio
     q.setDescription(if (questionDescription == None) "" else questionDescription.get)
     val singleSelectQuestionSpec = new persistence.SingleSelectQuestion()
       .setOfferedAnswers(scala.collection.JavaConversions.seqAsJavaList(offeredAnswers))
+      .setOther(if(other == None) "" else other.get)
     q.setSpec(singleSelectQuestionSpec)
-    //TODO ovo gore odkomentiraj kad se testira
     return q
   }
 }

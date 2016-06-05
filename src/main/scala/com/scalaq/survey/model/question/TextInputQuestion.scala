@@ -3,9 +3,7 @@ package com.scalaq.survey.model.question
 import com.scalaq.survey.model.answer.{Answer, TextAnswer}
 
 import scalaq.persistence
-import scalaq.persistence.{QuestionSpec, TextInputQuestion}
 
-//input field for text
 case class TextInputQuestion(questionText: String, questionDescription: Option[String]) extends Question {
   def getRandomAnswer(): Answer = {
     TextAnswer("random answer")
@@ -25,12 +23,11 @@ case class TextInputQuestion(questionText: String, questionDescription: Option[S
     data
   }
 
-  def getPersistanceQuestion(): scalaq.persistence.Question = {
-    val q: scalaq.persistence.Question = new persistence.Question()
+  def getPersistanceQuestion(): persistence.Question = {
+    val q: persistence.Question = new persistence.Question()
     q.setBody(questionText)
     q.setDescription(if (questionDescription == None) "" else questionDescription.get)
     q.setSpec(new persistence.TextInputQuestion())
-    //TODO ovo gore odkomentiraj kad se testira
     return q
   }
 }
