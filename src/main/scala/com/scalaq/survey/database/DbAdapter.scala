@@ -50,7 +50,9 @@ object DbAdapter {
     questionnaireRepository.delete(getPersistanceQuestionnaire(questionnaire))
   }
 
-
+  def deleteQuestionnaire(questionnaire: persistence.Questionnaire): Unit = {
+    questionnaireRepository.delete(questionnaire)
+  }
 
   def saveCompletedQuestionnaire(completedQuestionnaire: CompletedQuestionnaire) = {
     val cq = new persistence.CompletedQuestionnaire()
