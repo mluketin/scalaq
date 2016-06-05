@@ -24,11 +24,13 @@ module persistence
   value SingleSelectQuestion{
     has mixin QuestionSpec;
     List<String> offeredAnswers;
+    String other;
   }
   
   value MultiSelectQuestion {
     has mixin QuestionSpec;
     List<String> offeredAnswers;
+    String other;
   }
   
   value OrdinalScaleQuestion {
@@ -57,18 +59,34 @@ module persistence
   
   mixin AnswerSpec;
   
+  value Unanswered {
+      has mixin AnswerSpec;
+  }
+  
   value TextAnswer {
     has mixin AnswerSpec;
     String text;
   }
   
-  value SingleAnswer {
+  value OrdinalScaleAnswer {
     has mixin AnswerSpec;
     Int selected;
   }
   
-  value MultipleAnswers {
+  value SingleSelectAnswer {
+    has mixin AnswerSpec;
+    Int selected;
+    String other;
+  }
+  
+  value MultiSelectAnswer {
     has mixin AnswerSpec;
     List<Int> selectedList;
+    String other;
+  }
+   
+  value MatrixAnswer {
+     has mixin AnswerSpec;
+     List<Int> selectedList;
   } 
 }
