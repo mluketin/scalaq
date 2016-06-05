@@ -2,13 +2,14 @@ package com.scalaq.survey.model.answer
 
 import scalaq.persistence
 
-case class TextAnswer(answer: String) extends Answer {
+case class Unanswered() extends Answer {
+
+  def answer(): Object = None
 
   def getPersistenceAnswer(): persistence.Answer = {
     val a = new persistence.Answer()
-    val spec = new persistence.TextAnswer()
+    val spec = new persistence.Unanswered()
     a.setSpec(spec)
     return a
   }
 }
-
