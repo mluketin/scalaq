@@ -16,8 +16,21 @@ object DbAdapter {
   val questionnaireRepository = locator.resolve(classOf[QuestionnaireRepository])
   val completedQuestionnaireRepository = locator.resolve(classOf[CompletedQuestionnaireRepository])
 
-  def saveQuestionnaire(questionnaire: Questionnaire): Unit = {
+  def saveQuestionnaire(questionnaire: Questionnaire): persistence.Questionnaire = {
     questionnaireRepository.insert(scalaToJavaQuestionnaire(questionnaire))
+    return getQuestionnaire(questionnaire)
+  }
+
+  def getQuestionnaire(questionnaire: Questionnaire): persistence.Questionnaire = {
+    for(q <- questionnaireRepository.search().asScala) {
+      if(q.getName == questionnaire.name) {
+        val desc = if(questionnaire.description == None) "" else questionnaire.description.get
+        if(q.getDescription == desc) {
+          return q
+        }
+      }
+    }
+    return null
   }
 
   def updateQuestionnaire(oldQuestionaire: Questionnaire, newQuestionnaire: Questionnaire): Unit = {
