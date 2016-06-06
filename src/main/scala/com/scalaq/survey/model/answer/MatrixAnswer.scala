@@ -22,6 +22,7 @@ import scalaq.persistence
   *
   *     0 represents marking column YES, 1 represents marking column NO, and -1 represents marking none of offered answers
   *
+  *   ALSO SEE DOCUMENTATION FOR MatrixQuestion for another example
   */
 case class MatrixAnswer(answer: Seq[Int]) extends Answer{
 

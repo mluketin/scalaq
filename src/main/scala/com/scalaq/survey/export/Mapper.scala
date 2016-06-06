@@ -8,7 +8,11 @@ import com.scalaq.survey.model.questionnaire.{CompletedQuestionnaire, Questionna
 import com.scalaq.survey.model.question
 import hr.ngs.templater.Configuration
 
-
+/**
+  * This class is used for mapping all answers from completed questionnaires for certain questionnaire.
+  * After mapping results, export can be done into xlsx and docx file formats
+  * @param quest questionnaire for which mapping will be made
+  */
 class Mapper(quest: Questionnaire) {
   private var questionnaire: Questionnaire = null
   private var questionMap = Map[Answer, Int]()
@@ -18,12 +22,21 @@ class Mapper(quest: Questionnaire) {
     exportMap += (q -> Map[Answer, Int]())
   }
 
+  /**
+    * Adds answers from completedQuestionnaires into map
+    * This method calls mapResults method for each completed questionaire in passed seqeuence
+    * @param completedQuestionnaires
+    */
   def mapResults(completedQuestionnaires: Seq[CompletedQuestionnaire]): Unit = {
     for (completedQuestionnaire <- completedQuestionnaires) {
       mapResults(completedQuestionnaire)
     }
   }
 
+  /**
+    * Adds answers from completedQuestionaire into map
+    * @param completedQuestionnaire
+    */
   def mapResults(completedQuestionnaire: CompletedQuestionnaire): Unit = {
     if (questionnaire == null) {
       questionnaire = completedQuestionnaire.questionnaire
@@ -43,18 +56,33 @@ class Mapper(quest: Questionnaire) {
     }
   }
 
+  /**
+    * Objects of this class are used for making exported document
+    * @param qName
+    * @param qDescription
+    * @param qData
+    * @param note
+    */
   case class ExportObjectClass(qName: String, qDescription: String, qData: Array[Array[Object]], note: String)
 
+  /**
+    * Exports mapped results into xlsx file format
+    * This method calles ExportXlsx method whic takes export objects as parameter
+    */
   def exportXlsx(): Unit = {
     exportXlsx(convertToExportObjects())
   }
 
+  /**
+    * Exports mapped results into xlsx file format
+    * @param exportObjects
+    */
   def exportXlsx(exportObjects: Seq[ExportObjectClass]): Unit = {
     case class Report(question: Seq[ExportObjectClass])
 
     val report = Report(exportObjects)
 
-    val templateStream = getClass.getResourceAsStream("/TemplateXlsx.xlsx")
+    val templateStream = getClass.getResourceAsStream("/Template.xlsx")
     val tmp: File = File.createTempFile("test", ".xlsx")
     val output: FileOutputStream = new FileOutputStream(tmp)
     val tpl = Configuration.factory().open(templateStream, "xlsx", output)
@@ -65,16 +93,24 @@ class Mapper(quest: Questionnaire) {
     Desktop.getDesktop.open(tmp)
   }
 
+  /**
+    * Exports mapped results into docx file format
+    * This method calles ExportDocx method whic takes export objects as parameter
+    */
   def exportDocx(): Unit = {
     exportDocx(convertToExportObjects())
   }
 
+  /**
+    * Exports mapped results into docx file format
+    * @param exportObjects
+    */
   def exportDocx(exportObjects: Seq[ExportObjectClass]): Unit = {
     case class Report(question: Seq[ExportObjectClass])
 
     val report = Report(exportObjects)
 
-    val templateStream = getClass.getResourceAsStream("/TemplateDocx.docx")
+    val templateStream = getClass.getResourceAsStream("/Template.docx")
     val tmp: File = File.createTempFile("test", ".docx")
     val output: FileOutputStream = new FileOutputStream(tmp)
     val tpl = Configuration.factory().open(templateStream, "docx", output)
@@ -85,7 +121,12 @@ class Mapper(quest: Questionnaire) {
     Desktop.getDesktop.open(tmp)
   }
 
-  private def convertToExportObjects(): Seq[ExportObjectClass] = {
+  /**
+    * For each question in questionnaire, this method calles
+    * question.getExportData(exportMap) and passes exportMap where mapper saves results of mapping
+    * @return returns sequence of export objects
+    */
+  def convertToExportObjects(): Seq[ExportObjectClass] = {
     for (question <- questionnaire.questions)
       yield ExportObjectClass(
         question.questionText,

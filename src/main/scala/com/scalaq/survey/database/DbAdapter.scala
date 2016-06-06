@@ -10,17 +10,29 @@ import scalaq.persistence.repositories.{CompletedQuestionnaireRepository, Questi
 import scalaq.{Boot, persistence}
 import scala.collection.JavaConverters._
 
-
+/**
+  * This class contains static methods for interacting with database
+  */
 object DbAdapter {
   val locator = Boot.configure("jdbc:postgresql://localhost:5432/scalaq?user=scalaq&password=scalaq")
   val questionnaireRepository = locator.resolve(classOf[QuestionnaireRepository])
   val completedQuestionnaireRepository = locator.resolve(classOf[CompletedQuestionnaireRepository])
 
+  /**
+    * Saves questionnaire into database
+    * @param questionnaire
+    * @return
+    */
   def saveQuestionnaire(questionnaire: Questionnaire): persistence.Questionnaire = {
     questionnaireRepository.insert(scalaToJavaQuestionnaire(questionnaire))
     return getQuestionnaire(questionnaire)
   }
 
+  /**
+    * Returns persistence questionnaire object for model questionnaire
+    * @param questionnaire
+    * @return
+    */
   def getQuestionnaire(questionnaire: Questionnaire): persistence.Questionnaire = {
     for(q <- questionnaireRepository.search().asScala) {
       if(q.getName == questionnaire.name) {
@@ -33,6 +45,11 @@ object DbAdapter {
     return null
   }
 
+  /**
+    * Updates questionnaire
+    * @param oldQuestionaire old model questionnaire
+    * @param newQuestionnaire new model questionnaire
+    */
   def updateQuestionnaire(oldQuestionaire: Questionnaire, newQuestionnaire: Questionnaire): Unit = {
 
     val pq = getPersistanceQuestionnaire(oldQuestionaire)
@@ -46,14 +63,27 @@ object DbAdapter {
 //    questionnaireRepository.update(scalaToJavaQuestionnaire(questionnaire))
   }
 
+  /**
+    * Deletes questionnaire
+    * @param questionnaire model questionnaire
+    */
   def deleteQuestionnaire(questionnaire: Questionnaire): Unit = {
     questionnaireRepository.delete(getPersistanceQuestionnaire(questionnaire))
   }
 
+  /**
+    * Deletes questionnaire
+    * @param questionnaire persistence questionnaire
+    */
   def deleteQuestionnaire(questionnaire: persistence.Questionnaire): Unit = {
     questionnaireRepository.delete(questionnaire)
   }
 
+  /**
+    * Saves completed questionnaire
+    * @param completedQuestionnaire model completed questionnaire
+    * @return
+    */
   def saveCompletedQuestionnaire(completedQuestionnaire: CompletedQuestionnaire) = {
     val cq = new persistence.CompletedQuestionnaire()
       .setQuestionnaire(getPersistanceQuestionnaire(completedQuestionnaire.questionnaire))
@@ -62,6 +92,11 @@ object DbAdapter {
     completedQuestionnaireRepository.insert(cq)
   }
 
+  /**
+    * converts model questionnaire into persistance questionnaire
+    * @param questionnaire
+    * @return
+    */
   private def scalaToJavaQuestionnaire(questionnaire: Questionnaire): persistence.Questionnaire = {
     new persistence.Questionnaire()
       .setName(questionnaire.name)
@@ -69,14 +104,29 @@ object DbAdapter {
       .setQuestions(scalaToJavaQuestions(questionnaire.questions))
   }
 
+  /**
+    * converts sequence of model questions into list of persistance question
+    * @param questions
+    * @return
+    */
   private def scalaToJavaQuestions(questions: Seq[Question]): util.List[persistence.Question] = {
     scala.collection.JavaConversions.seqAsJavaList(for (q <- questions) yield q.getPersistanceQuestion())
   }
 
+  /**
+    * converts sequence of model answers into list of persistence answers
+    * @param answers
+    * @return
+    */
   private def scalaToJavaAnswers(answers: Seq[Answer]): util.List[persistence.Answer] = {
     scala.collection.JavaConversions.seqAsJavaList(for (a <- answers) yield a.getPersistenceAnswer())
   }
 
+  /**
+    * gets persistence questionnaire for model questionnaire
+    * @param q
+    * @return
+    */
   def getPersistanceQuestionnaire(q: Questionnaire): persistence.Questionnaire = {
     //TODO WIP
     for (item <- questionnaireRepository.search().asScala) {

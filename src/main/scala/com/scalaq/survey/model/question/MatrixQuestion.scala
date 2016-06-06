@@ -6,6 +6,37 @@ import com.scalaq.survey.model.answer.{Answer, MatrixAnswer}
 
 import scalaq.persistence
 
+/**
+  * Used for questions that have tables
+  *
+  * Example
+  *
+  *  "How much do you like this tv shows?"
+  *                 Dont like at all |   OK    | Like very much
+  *  Supernatural                         X
+  *  Arrow                  X
+  *  Flash                                              X
+  *  Supergirl
+  *  The 100                               X
+  *
+  *  X mark represents what user marked as answer
+  *
+  *  Answer for this example will be
+  *  MatrixAnswer(Seq(1, 0, 2, -1, 1))
+  *
+  *  answer order represents rows
+  *  value represents index of chosen column (-1 represents not chosing anything as answer)
+  *
+  *  so first number is 1, that means first row, and second column (indexing of column is from 0)
+  *  second number is 0, that means second row, and first column
+  *  etc
+  *
+  *
+  * @param questionText
+  * @param questionDescription
+  * @param rows
+  * @param columns
+  */
 case class MatrixQuestion(questionText: String, questionDescription: Option[String], rows: Seq[String], columns: Seq[String]) extends Question {
   def getRandomAnswer(): Answer = {
     val rand = new Random()

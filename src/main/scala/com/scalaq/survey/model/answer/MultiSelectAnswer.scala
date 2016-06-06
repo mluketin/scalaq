@@ -20,6 +20,8 @@ import scalaq.persistence
   *
   * 0 represents index of football, and 2 represents index of handball
   *
+  * ALSO SEE DOCUMENTATION FOR MultiSelectQuesiton for detailed exmplanation
+  *
   * @param answer
   */
 case class MultiSelectAnswer(answer: Option[Seq[Int]], other: Option[String] = None) extends Answer {

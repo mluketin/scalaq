@@ -4,6 +4,18 @@ import com.scalaq.survey.model.answer.{Answer, TextAnswer}
 
 import scalaq.persistence
 
+/**
+  * Used for questions that require user input as answer.
+  *
+  * Example: questions like
+  *
+  *   "How old are you?"
+  *   "Write your favourite book"
+  *   etc.
+  *
+  * @param questionText
+  * @param questionDescription
+  */
 case class TextInputQuestion(questionText: String, questionDescription: Option[String]) extends Question {
   def getRandomAnswer(): Answer = {
     TextAnswer("random answer")

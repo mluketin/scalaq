@@ -6,7 +6,34 @@ import com.scalaq.survey.model.answer.{Answer, MultiSelectAnswer}
 
 import scalaq.persistence
 
-//check box
+
+/**
+  * Used for questions on which user can choose MORE than one answer (check boxes are used for offering answers)
+  * Question can also have 'Other' option on which user imputs his own answer
+  *
+  * Example:
+  *
+  *   "What books do you like?"
+  *     - Harry Potter
+  *     - Lord of the Rings
+  *     - The Witcher
+  *     - Write your own
+  *
+  *    if user choses this Other option than he will provide his own answer
+  *
+  *    If user whats to check first, second and last option, and provide his own anser for last option as "Eragon",
+  *    Than answer for that will be MultiSelectAnswer(Some(Seq(0,1)), Some("Eragon"))
+  *
+  *   0 and 1 represent index of chosen options
+  *
+  *    If he wants only last option: MultiSelectAnswer(None, Some("Eragon"))
+  *
+  *
+  * @param questionText
+  * @param questionDescription
+  * @param offeredAnswers in above example, Seq("Harry Potter", "Lord of the Rings", "The Witcher")
+  * @param other oprional parameter, by default this is None; in above example, Some("Write your own")
+  */
 case class MultiSelectQuestion(questionText: String, questionDescription: Option[String], offeredAnswers: Seq[String], other: Option[String] = None) extends Question {
   def getRandomAnswer(): Answer = {
     val rand = new Random()

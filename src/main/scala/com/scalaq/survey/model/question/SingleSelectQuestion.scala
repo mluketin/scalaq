@@ -8,6 +8,31 @@ import scalaq.persistence
 
 
 //radio botuns, combo box
+/**
+  * Used for questions on which user can choose only one answer (radio bottun or combo box used for offering answers)
+  * Question can also have 'Other' option on which user imputs his own answer
+  *
+  * Example:
+  *
+  *   "What is your favourite book?"
+  *     - Harry Potter
+  *     - Lord of the Rings
+  *     - The Witcher
+  *     - Write your own
+  *
+  *    if user choses this Other option than he will provide his own answer
+  *
+  *       Answer for that kind of question will be SingleSelectAnswer(None, Some("Eragon")) (if user imputs "Eragon" as his answer)
+  *       If user choses one of offered answer, for example Harry Potter than answer will be: SingleSelectAnswer(Some(0), None)
+  *       0 represents index of offered answer
+  *
+  *
+  *
+  * @param questionText
+  * @param questionDescription
+  * @param offeredAnswers in above example, Seq("Harry Potter", "Lord of the Rings", "The Witcher")
+  * @param other oprional parameter, by default this is None; in above example, Some("Write your own")
+  */
 case class SingleSelectQuestion(questionText: String, questionDescription: Option[String], offeredAnswers: Seq[String], other: Option[String] = None) extends Question {
   def getRandomAnswer(): Answer = {
     val rand = new Random()

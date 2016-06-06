@@ -2,6 +2,9 @@ package com.scalaq.survey.model.answer
 
 import scalaq.persistence
 
+/**
+  * Used as answer for question that is left unanswered.
+  */
 case class Unanswered() extends Answer {
 
   def answer(): Object = None
