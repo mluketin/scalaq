@@ -78,9 +78,11 @@ class Mapper(quest: Questionnaire) {
     * @param exportObjects
     */
   def exportXlsx(exportObjects: Seq[ExportObjectClass]): Unit = {
-    case class Report(question: Seq[ExportObjectClass])
+    case class Report(name: String, description: String, question: Seq[ExportObjectClass])
 
-    val report = Report(exportObjects)
+    val name = questionnaire.name
+    val description = if(questionnaire.description == None) "" else questionnaire.description.get
+    val report = Report(name, description, exportObjects)
 
     val templateStream = getClass.getResourceAsStream("/Template.xlsx")
     val tmp: File = File.createTempFile("test", ".xlsx")
@@ -106,9 +108,11 @@ class Mapper(quest: Questionnaire) {
     * @param exportObjects
     */
   def exportDocx(exportObjects: Seq[ExportObjectClass]): Unit = {
-    case class Report(question: Seq[ExportObjectClass])
+    case class Report(name: String, description: String, question: Seq[ExportObjectClass])
 
-    val report = Report(exportObjects)
+    val name = questionnaire.name
+    val description = if(questionnaire.description == None) "" else questionnaire.description.get
+    val report = Report(name, description, exportObjects)
 
     val templateStream = getClass.getResourceAsStream("/Template.docx")
     val tmp: File = File.createTempFile("test", ".docx")
