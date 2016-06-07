@@ -61,7 +61,6 @@ case class MultiSelectQuestion(questionText: String, questionDescription: Option
     val counters = new Array[Int](offeredAnswers.length)
     for(item <- map) {
       for(index <- item._1.asInstanceOf[MultiSelectAnswer].answer.get) {
-        println(index)
         counters(index) += item._2
       }
     }
@@ -74,16 +73,6 @@ case class MultiSelectQuestion(questionText: String, questionDescription: Option
       data(br+1) = Array(offeredAnswers(br), counters(br).asInstanceOf[Object])
     }
 
-//    for (entry <- map) {
-//      var stringBuilder = ""
-//      for (a <- entry._1.answer.asInstanceOf[Seq[Int]]) {
-//        stringBuilder += a + "\n"
-//      }
-//      println(stringBuilder.length)
-//      stringBuilder.substring(0, stringBuilder.length - 1) //to remove last "\n"
-//      data(br) = Array(stringBuilder, entry._2.asInstanceOf[Object])
-//      br += 1
-//    }
     data
   }
 
