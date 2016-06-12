@@ -2,7 +2,7 @@ package com.scalaq.survey.database
 
 import java.util
 
-import com.scalaq.survey.ScalaToJavaConverter
+import com.scalaq.survey.converter.ScalaToJavaConverter
 import com.scalaq.survey.model.answer.Answer
 import com.scalaq.survey.model.question.Question
 import com.scalaq.survey.model.questionnaire.{CompletedQuestionnaire, Questionnaire}
@@ -104,11 +104,26 @@ object DbAdapter {
     * @return
     */
   def saveCompletedQuestionnaire(completedQuestionnaire: CompletedQuestionnaire) = {
-    val cq = new persistence.CompletedQuestionnaire()
-      .setQuestionnaire(getPersistanceQuestionnaire(completedQuestionnaire.questionnaire))
-      .setAnswers(ScalaToJavaConverter.scalaToJavaAnswers(completedQuestionnaire.answers))
+    completedQuestionnaireRepository.insert(completedQuestionnaire.getPersistenceCompleteQuestionnaire())
+  }
 
-    completedQuestionnaireRepository.insert(cq)
+  /**
+    * Updates existing completedQuestionnaire with new answers
+    * @param oldQuestionaire
+    * @param newQuestionnaire
+    */
+  def updateCompletedQuestionnaire(oldQuestionaire: persistence.CompletedQuestionnaire, newQuestionnaire: CompletedQuestionnaire): Unit = {
+    oldQuestionaire.setAnswers(ScalaToJavaConverter.scalaToJavaAnswers(newQuestionnaire.answers))
+    completedQuestionnaireRepository.update(oldQuestionaire)
+  }
+
+
+  /**
+    * Deletes completed questionnaire
+    * @param cq persistence completed questionnaire
+    */
+  def deleteCompletedQuestionnaire(cq: persistence.CompletedQuestionnaire): Unit = {
+    completedQuestionnaireRepository.delete(cq)
   }
 
   /**
