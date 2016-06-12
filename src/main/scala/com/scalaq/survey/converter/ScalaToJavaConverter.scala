@@ -1,4 +1,4 @@
-package com.scalaq.survey
+package com.scalaq.survey.converter
 
 import java.util
 
