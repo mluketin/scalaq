@@ -1,6 +1,10 @@
 package com.scalaq.survey.model.questionnaire
 
+import com.scalaq.survey.converter.ScalaToJavaConverter
+import com.scalaq.survey.database.DbAdapter
 import com.scalaq.survey.model.answer.Answer
+
+import scalaq.persistence
 
 /**
   *
@@ -10,4 +14,10 @@ import com.scalaq.survey.model.answer.Answer
 case class CompletedQuestionnaire(questionnaire: Questionnaire, answers: Seq[Answer]) {
   require(questionnaire.questions.size == answers.size,
     "answers field must be the same size as question field in questionnaire")
+
+  def getPersistenceCompleteQuestionnaire(): persistence.CompletedQuestionnaire = {
+    new persistence.CompletedQuestionnaire()
+      .setQuestionnaire(DbAdapter.getPersistanceQuestionnaire(questionnaire))
+      .setAnswers(ScalaToJavaConverter.scalaToJavaAnswers(answers))
+  }
 }
