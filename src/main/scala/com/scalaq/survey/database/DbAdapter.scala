@@ -5,6 +5,7 @@ import java.util
 import com.scalaq.survey.model.answer.Answer
 import com.scalaq.survey.model.question.Question
 import com.scalaq.survey.model.questionnaire.{CompletedQuestionnaire, Questionnaire}
+import org.revenj.patterns.Specification
 
 import scalaq.persistence.repositories.{CompletedQuestionnaireRepository, QuestionnaireRepository}
 import scalaq.{Boot, persistence}
@@ -43,6 +44,23 @@ object DbAdapter {
       }
     }
     return null
+  }
+
+  /**
+    * Returns java list of questionnaires that have same name as param name
+    */
+  def getQuestionnaires(name: String): java.util.List[persistence.Questionnaire] = {
+    val hasName = new persistence.Questionnaire.hasName(name)
+    questionnaireRepository.search(hasName)
+  }
+
+
+  /**
+    * Returns java list of questionnaires that have same name and description params
+    */
+  def getQuestionnaires(name: String, description: String): java.util.List[persistence.Questionnaire] = {
+    val hasNameAndDescription = new persistence.Questionnaire.hasNameAndDescription(name, description)
+    questionnaireRepository.search(hasNameAndDescription)
   }
 
   /**
@@ -137,5 +155,16 @@ object DbAdapter {
       }
     }
     return new persistence.Questionnaire()
+  }
+
+  /**
+    * returns srquence of all completed questionaires for questionnaire passed as param q
+    * @param q
+    * @return
+    */
+  def getCompletedQuestionnaires(q: persistence.Questionnaire): Seq[persistence.CompletedQuestionnaire] = {
+    for(cq <- completedQuestionnaireRepository.search().asScala
+      if cq.getQuestionnaire == q)
+      yield cq
   }
 }
