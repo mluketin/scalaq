@@ -2,6 +2,7 @@ package com.scalaq.survey.database
 
 import java.util
 
+import com.scalaq.survey.ScalaToJavaConverter
 import com.scalaq.survey.model.answer.Answer
 import com.scalaq.survey.model.question.Question
 import com.scalaq.survey.model.questionnaire.{CompletedQuestionnaire, Questionnaire}
@@ -21,12 +22,12 @@ object DbAdapter {
 
   /**
     * Saves questionnaire into database
-    * @param questionnaire
+    * @param questionnaire model questionnaire
     * @return
     */
   def saveQuestionnaire(questionnaire: Questionnaire): persistence.Questionnaire = {
-    questionnaireRepository.insert(scalaToJavaQuestionnaire(questionnaire))
-    return getQuestionnaire(questionnaire)
+    questionnaireRepository.insert(questionnaire.getPersistanceQuestionnaire())
+    getQuestionnaire(questionnaire)
   }
 
   /**
@@ -73,7 +74,7 @@ object DbAdapter {
     val pq = getPersistanceQuestionnaire(oldQuestionaire)
     pq.setName(newQuestionnaire.name)
     pq.setDescription(if (newQuestionnaire.description == None) "" else newQuestionnaire.description.get)
-    pq.setQuestions(scalaToJavaQuestions(newQuestionnaire.questions))
+    pq.setQuestions(ScalaToJavaConverter.scalaToJavaQuestions(newQuestionnaire.questions))
 
     questionnaireRepository.update(pq)
 
@@ -105,39 +106,9 @@ object DbAdapter {
   def saveCompletedQuestionnaire(completedQuestionnaire: CompletedQuestionnaire) = {
     val cq = new persistence.CompletedQuestionnaire()
       .setQuestionnaire(getPersistanceQuestionnaire(completedQuestionnaire.questionnaire))
-      .setAnswers(scalaToJavaAnswers(completedQuestionnaire.answers))
+      .setAnswers(ScalaToJavaConverter.scalaToJavaAnswers(completedQuestionnaire.answers))
 
     completedQuestionnaireRepository.insert(cq)
-  }
-
-  /**
-    * converts model questionnaire into persistance questionnaire
-    * @param questionnaire
-    * @return
-    */
-  private def scalaToJavaQuestionnaire(questionnaire: Questionnaire): persistence.Questionnaire = {
-    new persistence.Questionnaire()
-      .setName(questionnaire.name)
-      .setDescription(if (questionnaire.description == None) "" else questionnaire.description.get)
-      .setQuestions(scalaToJavaQuestions(questionnaire.questions))
-  }
-
-  /**
-    * converts sequence of model questions into list of persistance question
-    * @param questions
-    * @return
-    */
-  private def scalaToJavaQuestions(questions: Seq[Question]): util.List[persistence.Question] = {
-    scala.collection.JavaConversions.seqAsJavaList(for (q <- questions) yield q.getPersistanceQuestion())
-  }
-
-  /**
-    * converts sequence of model answers into list of persistence answers
-    * @param answers
-    * @return
-    */
-  private def scalaToJavaAnswers(answers: Seq[Answer]): util.List[persistence.Answer] = {
-    scala.collection.JavaConversions.seqAsJavaList(for (a <- answers) yield a.getPersistenceAnswer())
   }
 
   /**
