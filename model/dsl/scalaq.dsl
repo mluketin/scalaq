@@ -1,12 +1,21 @@
-//module je kao schema ili package
 module persistence
 {
-  //aggregate je vrsni koncept u dsl gramatici koji je spremiste podataka
-  //id je implicitan
   aggregate Questionnaire {
     String  name;
     String  description;
     List<Question> questions;
+    specification hasName
+      'it => it.name == name'
+      {
+          String name;
+      }
+
+    specification hasNameAndDescription
+      'it => it.name == name && it.description == description'
+      {
+          String name;
+          String description;
+      }
   }
   
   entity Question {
