@@ -1,6 +1,6 @@
 package com.scalaq.survey.model.questionnaire
 
-import com.scalaq.survey.ScalaToJavaConverter
+import com.scalaq.survey.converter.ScalaToJavaConverter
 import com.scalaq.survey.model.question.Question
 
 import scalaq.persistence
