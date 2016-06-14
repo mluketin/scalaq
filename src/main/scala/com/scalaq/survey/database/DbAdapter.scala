@@ -25,9 +25,9 @@ object DbAdapter {
     * @param questionnaire model questionnaire
     * @return
     */
-  def saveQuestionnaire(questionnaire: Questionnaire): persistence.Questionnaire = {
-    questionnaireRepository.insert(questionnaire.getPersistanceQuestionnaire())
-    getQuestionnaire(questionnaire)
+  def saveQuestionnaire(questionnaire: Questionnaire): Option[persistence.Questionnaire] = {
+    val id = questionnaireRepository.insert(questionnaire.getPersistanceQuestionnaire())
+    getQuestionnaire(id.toInt)
   }
 
   /**
@@ -45,6 +45,16 @@ object DbAdapter {
       }
     }
     return null
+  }
+
+  def getQuestionnaire(id: Int): Option[persistence.Questionnaire] = {
+
+    for(q <- questionnaireRepository.search().asScala) {
+      if(q.getID == id) {
+        return Some(q)
+      }
+    }
+    None
   }
 
   /**
