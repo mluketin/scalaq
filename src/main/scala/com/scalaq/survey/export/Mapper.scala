@@ -15,7 +15,6 @@ import hr.ngs.templater.Configuration
   */
 class Mapper(quest: Questionnaire) {
   private var questionnaire: Questionnaire = null
-  private var questionMap = Map[Answer, Int]()
   private var exportMap = Map[question.Question, Map[Answer, Int]]()
 
   for (q <- quest.questions) {
@@ -69,7 +68,7 @@ class Mapper(quest: Questionnaire) {
     * Exports mapped results into xlsx file format
     * This method calles ExportXlsx method whic takes export objects as parameter
     */
-  def exportXlsx(): Unit = {
+  def exportXlsx(): File = {
     exportXlsx(convertToExportObjects())
   }
 
@@ -77,7 +76,9 @@ class Mapper(quest: Questionnaire) {
     * Exports mapped results into xlsx file format
     * @param exportObjects
     */
-  def exportXlsx(exportObjects: Seq[ExportObjectClass]): Unit = {
+
+
+  def exportXlsx(exportObjects: Seq[ExportObjectClass]): File = {
     case class Report(name: String, description: String, question: Seq[ExportObjectClass])
 
     val name = questionnaire.name
@@ -92,14 +93,14 @@ class Mapper(quest: Questionnaire) {
     tpl.flush()
     templateStream.close()
     output.close()
-    Desktop.getDesktop.open(tmp)
+    tmp
   }
 
   /**
     * Exports mapped results into docx file format
     * This method calles ExportDocx method whic takes export objects as parameter
     */
-  def exportDocx(): Unit = {
+  def exportDocx(): File = {
     exportDocx(convertToExportObjects())
   }
 
@@ -107,7 +108,7 @@ class Mapper(quest: Questionnaire) {
     * Exports mapped results into docx file format
     * @param exportObjects
     */
-  def exportDocx(exportObjects: Seq[ExportObjectClass]): Unit = {
+  def exportDocx(exportObjects: Seq[ExportObjectClass]): File = {
     case class Report(name: String, description: String, question: Seq[ExportObjectClass])
 
     val name = questionnaire.name
@@ -122,7 +123,7 @@ class Mapper(quest: Questionnaire) {
     tpl.flush()
     templateStream.close()
     output.close()
-    Desktop.getDesktop.open(tmp)
+    tmp
   }
 
   /**
