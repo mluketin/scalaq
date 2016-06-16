@@ -4,6 +4,7 @@ import java.util
 
 import com.scalaq.survey.converter.ScalaToJavaConverter
 import com.scalaq.survey.model.answer.Answer
+import com.scalaq.survey.model.answer
 import com.scalaq.survey.model.question.Question
 import com.scalaq.survey.model.questionnaire.{CompletedQuestionnaire, Questionnaire}
 import org.revenj.patterns.Specification
@@ -117,6 +118,27 @@ object DbAdapter {
     completedQuestionnaireRepository.insert(completedQuestionnaire.getPersistenceCompleteQuestionnaire())
   }
 
+
+  /**
+    * Saves completed questionnaire
+    * @param questionnaire
+    * @param completedQuestionnaire
+    */
+  def saveCompletedQuestionnaire(questionnaire: persistence.Questionnaire, completedQuestionnaire: CompletedQuestionnaire): Unit ={
+    completedQuestionnaireRepository.insert(completedQuestionnaire.getPersistenceCompleteQuestionnaire(questionnaire))
+  }
+
+  /**
+    * Saves completed questionnaire
+    */
+  def saveCompletedQuestionnaire(questionnaire: persistence.Questionnaire, answers: Seq[answer.Answer]): Unit ={
+    completedQuestionnaireRepository.insert(CompletedQuestionnaire.getPersistenceCompleteQuestionnaire(questionnaire, answers))
+  }
+
+  def saveCompletedQuestionnaire(completedQuestionnaire: persistence.CompletedQuestionnaire): Unit = {
+    completedQuestionnaireRepository.insert(completedQuestionnaire)
+  }
+
   /**
     * Updates existing completedQuestionnaire with new answers
     * @param oldQuestionaire
@@ -126,6 +148,8 @@ object DbAdapter {
     oldQuestionaire.setAnswers(ScalaToJavaConverter.scalaToJavaAnswers(newQuestionnaire.answers))
     completedQuestionnaireRepository.update(oldQuestionaire)
   }
+
+
 
 
   /**
