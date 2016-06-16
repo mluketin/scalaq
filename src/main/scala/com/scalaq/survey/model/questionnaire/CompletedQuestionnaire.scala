@@ -20,4 +20,19 @@ case class CompletedQuestionnaire(questionnaire: Questionnaire, answers: Seq[Ans
       .setQuestionnaire(DbAdapter.getPersistanceQuestionnaire(questionnaire))
       .setAnswers(ScalaToJavaConverter.scalaToJavaAnswers(answers))
   }
+
+  def getPersistenceCompleteQuestionnaire(questionnaire: persistence.Questionnaire): persistence.CompletedQuestionnaire = {
+    new persistence.CompletedQuestionnaire()
+      .setQuestionnaire(questionnaire)
+      .setAnswers(ScalaToJavaConverter.scalaToJavaAnswers(answers))
+  }
+}
+
+object CompletedQuestionnaire {
+
+  def getPersistenceCompleteQuestionnaire(questionnaire: persistence.Questionnaire, answers: Seq[Answer]): persistence.CompletedQuestionnaire = {
+    new persistence.CompletedQuestionnaire()
+      .setQuestionnaire(questionnaire)
+      .setAnswers(ScalaToJavaConverter.scalaToJavaAnswers(answers))
+  }
 }
