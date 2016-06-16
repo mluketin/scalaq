@@ -1,7 +1,7 @@
 package com.scalaq.survey.export
 
 import java.awt.Desktop
-import java.io.{File, FileOutputStream}
+import java.io.{File, FileOutputStream, InputStream}
 
 import com.scalaq.survey.model.answer.{Answer, Unanswered}
 import com.scalaq.survey.model.questionnaire.{CompletedQuestionnaire, Questionnaire}
@@ -11,6 +11,7 @@ import hr.ngs.templater.Configuration
 /**
   * This class is used for mapping all answers from completed questionnaires for certain questionnaire.
   * After mapping results, export can be done into xlsx and docx file formats
+  *
   * @param quest questionnaire for which mapping will be made
   */
 class Mapper(quest: Questionnaire) {
@@ -24,6 +25,7 @@ class Mapper(quest: Questionnaire) {
   /**
     * Adds answers from completedQuestionnaires into map
     * This method calls mapResults method for each completed questionaire in passed seqeuence
+    *
     * @param completedQuestionnaires
     */
   def mapResults(completedQuestionnaires: Seq[CompletedQuestionnaire]): Unit = {
@@ -34,6 +36,7 @@ class Mapper(quest: Questionnaire) {
 
   /**
     * Adds answers from completedQuestionaire into map
+    *
     * @param completedQuestionnaire
     */
   def mapResults(completedQuestionnaire: CompletedQuestionnaire): Unit = {
@@ -57,6 +60,7 @@ class Mapper(quest: Questionnaire) {
 
   /**
     * Objects of this class are used for making exported document
+    *
     * @param qName
     * @param qDescription
     * @param qData
@@ -68,24 +72,26 @@ class Mapper(quest: Questionnaire) {
     * Exports mapped results into xlsx file format
     * This method calles ExportXlsx method whic takes export objects as parameter
     */
-  def exportXlsx(): File = {
-    exportXlsx(convertToExportObjects())
+  def exportXlsx(templateInputStream: InputStream): File = {
+    exportXlsx(convertToExportObjects(), templateInputStream)
   }
 
   /**
     * Exports mapped results into xlsx file format
+    *
     * @param exportObjects
+    * @param templateInputStream input stream for Template file used for xlsx export
     */
-
-
-  def exportXlsx(exportObjects: Seq[ExportObjectClass]): File = {
+  def exportXlsx(exportObjects: Seq[ExportObjectClass], templateInputStream: InputStream): File = {
     case class Report(name: String, description: String, question: Seq[ExportObjectClass])
 
-    val name = questionnaire.name
-    val description = if(questionnaire.description == None) "" else questionnaire.description.get
+
+    val name = if(questionnaire != null) questionnaire.name else "No answers"
+    val description = if(questionnaire != null) { if(questionnaire.description == None) "" else questionnaire.description.get} else ""
     val report = Report(name, description, exportObjects)
 
-    val templateStream = getClass.getResourceAsStream("/Template.xlsx")
+    //    val templateStream = getClass.getResourceAsStream("/Template.xlsx")
+    val templateStream = templateInputStream
     val tmp: File = File.createTempFile("test", ".xlsx")
     val output: FileOutputStream = new FileOutputStream(tmp)
     val tpl = Configuration.factory().open(templateStream, "xlsx", output)
@@ -97,25 +103,30 @@ class Mapper(quest: Questionnaire) {
   }
 
   /**
-    * Exports mapped results into docx file format
+    *  Exports mapped results into docx file format
     * This method calles ExportDocx method whic takes export objects as parameter
+    *
+    * @param templateInputStream input stream for Template file used for docx export
+    * @return
     */
-  def exportDocx(): File = {
-    exportDocx(convertToExportObjects())
+  def exportDocx(templateInputStream: InputStream): File = {
+    exportDocx(convertToExportObjects(), templateInputStream)
   }
 
   /**
     * Exports mapped results into docx file format
+    *
     * @param exportObjects
     */
-  def exportDocx(exportObjects: Seq[ExportObjectClass]): File = {
+  def exportDocx(exportObjects: Seq[ExportObjectClass], templateInputStream: InputStream): File = {
     case class Report(name: String, description: String, question: Seq[ExportObjectClass])
 
-    val name = questionnaire.name
-    val description = if(questionnaire.description == None) "" else questionnaire.description.get
+    val name = if(questionnaire != null) questionnaire.name else "No answers"
+    val description = if(questionnaire != null) { if(questionnaire.description == None) "" else questionnaire.description.get} else ""
     val report = Report(name, description, exportObjects)
 
-    val templateStream = getClass.getResourceAsStream("/Template.docx")
+    //    val templateStream = getClass.getResourceAsStream("/Template.docx")
+    val templateStream = templateInputStream
     val tmp: File = File.createTempFile("test", ".docx")
     val output: FileOutputStream = new FileOutputStream(tmp)
     val tpl = Configuration.factory().open(templateStream, "docx", output)
@@ -129,14 +140,18 @@ class Mapper(quest: Questionnaire) {
   /**
     * For each question in questionnaire, this method calles
     * question.getExportData(exportMap) and passes exportMap where mapper saves results of mapping
+    *
     * @return returns sequence of export objects
     */
   def convertToExportObjects(): Seq[ExportObjectClass] = {
-    for (question <- questionnaire.questions)
-      yield ExportObjectClass(
-        question.questionText,
-        if (question.questionDescription == None) "" else question.questionDescription.get,
-        question.getExportData(exportMap),
-        "")
+    if (questionnaire != null) {
+      return for (question <- questionnaire.questions)
+        yield ExportObjectClass(
+          question.questionText,
+          if (question.questionDescription == None) "" else question.questionDescription.get,
+          question.getExportData(exportMap),
+          "")
+    }
+    return Seq(ExportObjectClass("", "", null, ""))
   }
 }
